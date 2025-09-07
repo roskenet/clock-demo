@@ -4,6 +4,25 @@
 
 Our task is to write a BirthdayGreeter:
 
+“Your mission, should you choose to accept it,
+is to write a BirthdayGreeter service.
+This service must be able to detect, on any given day,
+whether it’s the user’s birthday —
+and greet them accordingly.
+
+As always, should your tests fail,
+the CI/CD pipeline will disavow any knowledge of your code.
+This message will self-destruct in five seconds.
+Good luck, developer.”
+
+```kotlin
+
+@SpringBootApplication
+class ClockDemoApplication
+
+data class Customer(val name: String, val birthday: LocalDate)
+```
+
 ## The quick and easy implementation
 
 ```kotlin
@@ -88,7 +107,7 @@ class BirthdayGreeter(val clock: Clock) {
         
 ```
 
-Then we adjust the test:
+Then we adjust the test.
 
 ```kotlin
     @Test
@@ -103,14 +122,35 @@ Then we adjust the test:
     }
 ```
 
+And now we can fix our code and add corner cases in a Test Driven Development style.
+
+```kotlin
+
+@Test
+fun testBirthdayGreeter_LeapYear() {
+    val fixedClock = Clock.fixed(Instant.parse("2025-03-01T09:00:00Z"), ZoneId.of("Europe/Berlin"))
+    val customer = Customer("Mark Foster", LocalDate.of(1984, Month.FEBRUARY, 29))
+    val greeter = BirthdayGreeter(fixedClock)
+
+    val result = greeter.greet(customer)
+
+    assertThat(result).isEqualTo("Happy Birthday, Mark Foster!")
+}
+```
+
+
 ### Fun with `Clock`s
 
+Playing in `jshell`: 
+
+```shell
 import java.time.*
 
 Clock baseClock = Clock.systemUTC()
 LocalTime.now(baseClock)
 
 Clock threeMinutesLate = Clock.offset(baseClock, Duration.ofMinutes(3))
+```
 
 ### We travel in Space
 
@@ -142,12 +182,12 @@ In all other cases: **use `Clock`**
 3. **Clean architecture** – respects SRP & Dependency Inversion  
 4. **Future-proof** – leap years & time zone edge cases will come
 
-### This is Nothing New 🚀
+### This is Nothing New 
 
 - We already use **abstractions for external resources** every day:
-    - Database access → via `DataSource`
+    - Database access via `DataSource`
     - In production: points to the real DB
-    - In tests: points to a differnt configuration DB (e.g. H2, Testcontainers, Docker-Postgres)
+    - In tests: points to a differnt configuration DB (e.g. H2, Testcontainers, im-memory-Postgres)
 
 - Nobody connects to the "real" production DB in a unit test, right?  
 
