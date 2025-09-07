@@ -1,5 +1,7 @@
 # The java.time.Clock Abstraction Pattern
 
+![Clock Abstraction Pattern](./assets/duke_back_to_the_future_0.webp)
+
 Our task is to write a BirthdayGreeter:
 
 ## The quick and easy implementation
